@@ -16,7 +16,7 @@ class TrayApp:
         
         # Путь по умолчанию
         self.default_folder = r"\\10.16.130.100\WMFactory\QA_DPT\IQC Task\38 Специалист\06 Сканы тестовых чек-листов"
-        self.scan_folder = self.default_folder
+        self.folder_path = self.default_folder
         
         # Интервал сканирования (в секундах)
         self.scan_interval = 3600  # 1 час
@@ -98,8 +98,8 @@ class TrayApp:
     def initialize_files(self):
         """Инициализация списка известных файлов"""
         try:
-            if os.path.exists(self.scan_folder):
-                for file in os.listdir(self.scan_folder):
+            if os.path.exists(self.folder_path):
+                for file in os.listdir(self.folder_path):
                     if file.lower().endswith('.pdf'):
                         self.known_files.add(file)
         except Exception as e:
@@ -108,12 +108,12 @@ class TrayApp:
     def scan_folder(self):
         """Сканирование папки на наличие новых файлов"""
         try:
-            if not os.path.exists(self.scan_folder):
-                print(f"Папка не найдена: {self.scan_folder}")
+            if not os.path.exists(self.folder_path):
+                print(f"Папка не найдена: {self.folder_path}")
                 return
             
             current_files = set()
-            for file in os.listdir(self.scan_folder):
+            for file in os.listdir(self.folder_path):
                 if file.lower().endswith('.pdf'):
                     current_files.add(file)
             
@@ -157,11 +157,11 @@ class TrayApp:
     def select_folder(self):
         """Диалог выбора папки"""
         folder = filedialog.askdirectory(
-            initialdir=self.scan_folder,
+            initialdir=self.folder_path,
             title="Выберите папку для сканирования"
         )
         if folder:
-            self.scan_folder = folder
+            self.folder_path = folder
             self.known_files.clear()
             self.initialize_files()
             messagebox.showinfo("Успешно", f"Папка изменена на:\n{folder}")
