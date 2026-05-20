@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where python *)",
+      "Bash(python -m py_compile state.py scanner.py notifier.py tray.py ui.py app.py main.py)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(python -m venv .venv)",
+      "Bash(./.venv/Scripts/python.exe -m pip install --quiet -r requirements.txt)",
+      "Bash(./.venv/Scripts/python.exe -c \"import state, scanner, notifier, tray, ui, app; print\\('ok'\\)\")",
+      "Bash(./.venv/Scripts/python.exe -c \"from PIL import Image; im = Image.open\\('assets/icon.ico'\\); print\\('icon ok:', im.size, im.mode\\)\")"
+    ]
+  }
+}
