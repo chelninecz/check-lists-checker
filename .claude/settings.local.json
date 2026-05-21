@@ -7,7 +7,8 @@
       "Bash(python -m venv .venv)",
       "Bash(./.venv/Scripts/python.exe -m pip install --quiet -r requirements.txt)",
       "Bash(./.venv/Scripts/python.exe -c \"import state, scanner, notifier, tray, ui, app; print\\('ok'\\)\")",
-      "Bash(./.venv/Scripts/python.exe -c \"from PIL import Image; im = Image.open\\('assets/icon.ico'\\); print\\('icon ok:', im.size, im.mode\\)\")"
+      "Bash(./.venv/Scripts/python.exe -c \"from PIL import Image; im = Image.open\\('assets/icon.ico'\\); print\\('icon ok:', im.size, im.mode\\)\")",
+      "Bash(./.venv/Scripts/python.exe -c \"import state, scanner, notifier, tray, ui, app, main; print\\('ok'\\)\")"
     ]
   }
 }

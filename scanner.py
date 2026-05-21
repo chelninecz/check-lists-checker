@@ -92,7 +92,7 @@ class ScannerService:
         self._next_run_ts: float | None = None
 
     def start(self) -> None:
-        self._schedule(0.0)
+        self._arm_timer(0.0)
 
     def stop(self) -> None:
         self._stop.set()
@@ -111,16 +111,17 @@ class ScannerService:
             if self._timer is not None:
                 self._timer.cancel()
                 self._timer = None
-        self._schedule(0.0)
+        self._arm_timer(0.0)
 
     @property
     def next_run_epoch(self) -> float | None:
         return self._next_run_ts
 
-    def _schedule(self, delay: float) -> None:
+    def _arm_timer(self, delay: float) -> None:
         if self._stop.is_set():
             return
         self._next_run_ts = time.time() + delay
+        log.info("Next scan scheduled in %.0f s", delay)
         t = threading.Timer(delay, self._run_cycle)
         t.daemon = True
         with self._lock:
@@ -131,16 +132,22 @@ class ScannerService:
         if self._stop.is_set():
             return
         self._running.set()
+        log.info("Scan cycle starting")
         try:
             self._on_status("сканирование…")
             cycle = self._do_scan()
+            # Update the predicted next-run time BEFORE notifying the UI,
+            # so on_cycle_done propagates a value that's actually in the future.
+            if not self._stop.is_set():
+                self._next_run_ts = time.time() + self._interval
             self._on_cycle_done(cycle)
         except Exception:
             log.exception("Scan cycle crashed")
         finally:
             self._running.clear()
+            log.info("Scan cycle finished")
             if not self._stop.is_set():
-                self._schedule(self._interval)
+                self._arm_timer(self._interval)
 
     def _do_scan(self) -> ScanCycleResult:
         config = self._get_config()

@@ -82,7 +82,7 @@ class MainWindow:
                 command=lambda k=key: self._choose(k),
             ).grid(row=row, column=2, sticky="e")
 
-            lv = tk.StringVar(value="Последний новый: —")
+            lv = tk.StringVar(value="Новый файл: —")
             self.link_vars[key] = lv
             link = tk.Label(
                 frame, textvariable=lv,
@@ -120,7 +120,14 @@ class MainWindow:
         if not path:
             return
         try:
-            subprocess.Popen(["explorer.exe", f"/select,{path}"])
+            # NB: explorer.exe is one of the rare Windows executables that
+            # does NOT accept the standard CreateProcess quoting that Python's
+            # subprocess applies when given a list. Passing ["explorer", "/select,C:\\path"]
+            # ends up as `explorer "/select,C:\\path"` and explorer silently
+            # falls back to opening "Documents". We pass a raw command-line
+            # string instead, so /select, and the path stay as separate tokens
+            # to explorer's parser.
+            subprocess.Popen(f'explorer /select,"{path}"')
         except Exception:
             log.exception("Failed to open explorer for %s", path)
 
@@ -130,13 +137,13 @@ class MainWindow:
         var = self.link_vars[key]
         label = self._links[key]
         if path:
-            var.set(f"Последний новый: {Path(path).name}")
+            var.set(f"Новый файл: {Path(path).name}")
             label.configure(
                 fg="#1565c0", cursor="hand2",
                 font=("Segoe UI", 9, "underline"),
             )
         else:
-            var.set("Последний новый: —")
+            var.set("Новый файл: —")
             label.configure(
                 fg="#888", cursor="arrow",
                 font=("Segoe UI", 9, ""),
