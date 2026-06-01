@@ -34,6 +34,8 @@ python main.py
 
 ## Сборка в standalone .exe
 
+### Локально
+
 ```powershell
 pip install pyinstaller
 pyinstaller --onefile --windowed --icon=assets/icon.ico `
@@ -42,6 +44,26 @@ pyinstaller --onefile --windowed --icon=assets/icon.ico `
 ```
 
 Готовый `dist\CheckListChecker.exe` можно копировать на любую Windows-машину без Python.
+
+### Через GitHub Actions (рекомендуется)
+
+В репозитории настроен workflow `.github/workflows/release.yml`, который
+собирает `.exe` на `windows-latest` и публикует его в GitHub Release.
+
+**Чтобы выпустить новую версию:**
+
+```powershell
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+CI запустится, соберёт `CheckListChecker.exe` и автоматически
+прикрепит его к Release `v1.0.0`. Пользователи качают по прямой
+ссылке со страницы Releases.
+
+**Для пробной сборки без релиза** — запустите workflow вручную
+(*Actions → Build release → Run workflow*). Готовый `.exe` останется
+в артефактах прогона (хранится 30 дней).
 
 ## Где хранится состояние
 
